@@ -12,8 +12,8 @@ using Talleres.Infrastructure;
 namespace Talleres.Infrastructure.Migrations
 {
     [DbContext(typeof(TallerContext))]
-    [Migration("20221018022222_last")]
-    partial class last
+    [Migration("20221020023855_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,26 @@ namespace Talleres.Infrastructure.Migrations
                     b.ToTable("Horario");
                 });
 
+            modelBuilder.Entity("Talleres.Domain.Entities.Notificacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notificaciones");
+                });
+
             modelBuilder.Entity("Talleres.Domain.Entities.Patrocinador", b =>
                 {
                     b.Property<int>("Id")
@@ -73,7 +93,7 @@ namespace Talleres.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patrocinador");
+                    b.ToTable("Patrocinadores");
                 });
 
             modelBuilder.Entity("Talleres.Domain.Entities.Publico", b =>
@@ -97,6 +117,27 @@ namespace Talleres.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Publicos");
+                });
+
+            modelBuilder.Entity("Talleres.Domain.Entities.Solicitud", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("IdTallerProgramacion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdTallerProgramacion");
+
+                    b.ToTable("Solicitudes");
                 });
 
             modelBuilder.Entity("Talleres.Domain.Entities.Taller", b =>
@@ -238,6 +279,17 @@ namespace Talleres.Infrastructure.Migrations
                     b.HasIndex("IdTaller");
 
                     b.ToTable("TallerProgramaciones");
+                });
+
+            modelBuilder.Entity("Talleres.Domain.Entities.Solicitud", b =>
+                {
+                    b.HasOne("Talleres.Domain.Entities.TallerProgramacion", "TallerProgramacion")
+                        .WithMany()
+                        .HasForeignKey("IdTallerProgramacion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TallerProgramacion");
                 });
 
             modelBuilder.Entity("Talleres.Domain.Entities.TallerAsistencia", b =>

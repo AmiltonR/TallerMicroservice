@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Talleres.Domain.DTOs;
 using Talleres.Domain.Entities;
-using Talleres.Domain.Models.DTOs;
+using Talleres.Domain.Models.DTOs.GenreralDTOs;
 using Talleres.Domain.Models.DTOs.GetDTOs;
 using Talleres.Domain.Models.DTOs.PostDTO;
 
@@ -26,8 +26,11 @@ namespace Talleres.API
 
                 //TALLERES
                 //GET
-                config.CreateMap<Taller, TallerGetDTO>();
-                config.CreateMap<TallerGetDTO, Taller>();
+                config.CreateMap<Taller, TallerDTO>();
+                config.CreateMap<TallerDTO, Taller>();
+                //POST
+                config.CreateMap<Taller, TallerPostDTO>();
+                config.CreateMap<TallerPostDTO, Taller>();
             });
             return mappingConfig;
         }

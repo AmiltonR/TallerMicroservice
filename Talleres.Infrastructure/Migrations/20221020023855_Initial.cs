@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Talleres.Infrastructure.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,7 +25,21 @@ namespace Talleres.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patrocinador",
+                name: "Notificaciones",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdUsuario = table.Column<int>(type: "int", nullable: false),
+                    Notification = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notificaciones", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Patrocinadores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -37,21 +51,22 @@ namespace Talleres.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patrocinador", x => x.Id);
+                    table.PrimaryKey("PK_Patrocinadores", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Publico",
+                name: "Publicos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PublicoObjetivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EdadMinima = table.Column<int>(type: "int", nullable: false),
+                    EdadMaxima = table.Column<int>(type: "int", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Publico", x => x.Id);
+                    table.PrimaryKey("PK_Publicos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,7 +84,7 @@ namespace Talleres.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TallerProgramacion",
+                name: "TallerProgramaciones",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -87,21 +102,21 @@ namespace Talleres.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TallerProgramacion", x => x.Id);
+                    table.PrimaryKey("PK_TallerProgramaciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TallerProgramacion_Patrocinador_IdPatrocinador",
+                        name: "FK_TallerProgramaciones_Patrocinadores_IdPatrocinador",
                         column: x => x.IdPatrocinador,
-                        principalTable: "Patrocinador",
+                        principalTable: "Patrocinadores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TallerProgramacion_Publico_IdPublico",
+                        name: "FK_TallerProgramaciones_Publicos_IdPublico",
                         column: x => x.IdPublico,
-                        principalTable: "Publico",
+                        principalTable: "Publicos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TallerProgramacion_Talleres_IdTaller",
+                        name: "FK_TallerProgramaciones_Talleres_IdTaller",
                         column: x => x.IdTaller,
                         principalTable: "Talleres",
                         principalColumn: "Id",
@@ -109,7 +124,27 @@ namespace Talleres.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TallerAsistencia",
+                name: "Solicitudes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdUsuario = table.Column<int>(type: "int", nullable: false),
+                    IdTallerProgramacion = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Solicitudes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Solicitudes_TallerProgramaciones_IdTallerProgramacion",
+                        column: x => x.IdTallerProgramacion,
+                        principalTable: "TallerProgramaciones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TallerAsistencias",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -121,17 +156,17 @@ namespace Talleres.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TallerAsistencia", x => x.Id);
+                    table.PrimaryKey("PK_TallerAsistencias", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TallerAsistencia_TallerProgramacion_IdTallerProgramacion",
+                        name: "FK_TallerAsistencias_TallerProgramaciones_IdTallerProgramacion",
                         column: x => x.IdTallerProgramacion,
-                        principalTable: "TallerProgramacion",
+                        principalTable: "TallerProgramaciones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TallerHorario",
+                name: "TallerHorarios",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -141,23 +176,23 @@ namespace Talleres.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TallerHorario", x => x.Id);
+                    table.PrimaryKey("PK_TallerHorarios", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TallerHorario_Horario_IdHorario",
+                        name: "FK_TallerHorarios_Horario_IdHorario",
                         column: x => x.IdHorario,
                         principalTable: "Horario",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TallerHorario_TallerProgramacion_IdTallerProgramacion",
+                        name: "FK_TallerHorarios_TallerProgramaciones_IdTallerProgramacion",
                         column: x => x.IdTallerProgramacion,
-                        principalTable: "TallerProgramacion",
+                        principalTable: "TallerProgramaciones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TallerParticipante",
+                name: "TallerParticipantes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -167,73 +202,84 @@ namespace Talleres.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TallerParticipante", x => x.Id);
+                    table.PrimaryKey("PK_TallerParticipantes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TallerParticipante_TallerProgramacion_IdTallerProgramacion",
+                        name: "FK_TallerParticipantes_TallerProgramaciones_IdTallerProgramacion",
                         column: x => x.IdTallerProgramacion,
-                        principalTable: "TallerProgramacion",
+                        principalTable: "TallerProgramaciones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerAsistencia_IdTallerProgramacion",
-                table: "TallerAsistencia",
+                name: "IX_Solicitudes_IdTallerProgramacion",
+                table: "Solicitudes",
                 column: "IdTallerProgramacion");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerHorario_IdHorario",
-                table: "TallerHorario",
+                name: "IX_TallerAsistencias_IdTallerProgramacion",
+                table: "TallerAsistencias",
+                column: "IdTallerProgramacion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TallerHorarios_IdHorario",
+                table: "TallerHorarios",
                 column: "IdHorario");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerHorario_IdTallerProgramacion",
-                table: "TallerHorario",
+                name: "IX_TallerHorarios_IdTallerProgramacion",
+                table: "TallerHorarios",
                 column: "IdTallerProgramacion");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerParticipante_IdTallerProgramacion",
-                table: "TallerParticipante",
+                name: "IX_TallerParticipantes_IdTallerProgramacion",
+                table: "TallerParticipantes",
                 column: "IdTallerProgramacion");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerProgramacion_IdPatrocinador",
-                table: "TallerProgramacion",
+                name: "IX_TallerProgramaciones_IdPatrocinador",
+                table: "TallerProgramaciones",
                 column: "IdPatrocinador");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerProgramacion_IdPublico",
-                table: "TallerProgramacion",
+                name: "IX_TallerProgramaciones_IdPublico",
+                table: "TallerProgramaciones",
                 column: "IdPublico");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TallerProgramacion_IdTaller",
-                table: "TallerProgramacion",
+                name: "IX_TallerProgramaciones_IdTaller",
+                table: "TallerProgramaciones",
                 column: "IdTaller");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TallerAsistencia");
+                name: "Notificaciones");
 
             migrationBuilder.DropTable(
-                name: "TallerHorario");
+                name: "Solicitudes");
 
             migrationBuilder.DropTable(
-                name: "TallerParticipante");
+                name: "TallerAsistencias");
+
+            migrationBuilder.DropTable(
+                name: "TallerHorarios");
+
+            migrationBuilder.DropTable(
+                name: "TallerParticipantes");
 
             migrationBuilder.DropTable(
                 name: "Horario");
 
             migrationBuilder.DropTable(
-                name: "TallerProgramacion");
+                name: "TallerProgramaciones");
 
             migrationBuilder.DropTable(
-                name: "Patrocinador");
+                name: "Patrocinadores");
 
             migrationBuilder.DropTable(
-                name: "Publico");
+                name: "Publicos");
 
             migrationBuilder.DropTable(
                 name: "Talleres");

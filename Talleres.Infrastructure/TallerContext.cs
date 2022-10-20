@@ -18,13 +18,13 @@ namespace Talleres.Infrastructure
         public DbSet<Taller> Talleres{ get; set; }
         public DbSet<TallerParticipante> TallerParticipantes { get; set; }
         public DbSet<Horario> Horario { get; set; }
-        //public DbSet<Notificacion> Notificaciones { get; set; }
+       public DbSet<Notificacion> Notificaciones { get; set; }
         public DbSet<Publico> Publicos { get; set; }
-        //public DbSet<Solicitud> Solicitudes { get; set; }
+        public DbSet<Solicitud> Solicitudes { get; set; }
         public DbSet<TallerAsistencia> TallerAsistencias { get; set; }
         public DbSet<TallerHorario> TallerHorarios { get; set; }
         public DbSet<TallerProgramacion> TallerProgramaciones { get; set; }
-
+        public DbSet<Patrocinador> Patrocinadores { get; set; }
 
     }
 }

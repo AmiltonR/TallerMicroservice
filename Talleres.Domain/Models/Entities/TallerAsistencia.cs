@@ -14,7 +14,7 @@ namespace Talleres.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        [ForeignKey("taller")]
+        [ForeignKey("TallerProgramacion")]
         public int IdTallerProgramacion { get; set; }
         [Required]
         public int IdUsuario { get; set; }

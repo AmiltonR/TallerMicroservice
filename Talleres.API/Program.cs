@@ -17,6 +17,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ITallerParticipanteRepository, TallerParticipanteRepository>();
 builder.Services.AddScoped<IHorarioRepository, HorarioRepositoy>();
+builder.Services.AddScoped<ITallerRepository, TallerRepository>();
 
 builder.Services.AddDbContext<TallerContext>(options =>
 {
