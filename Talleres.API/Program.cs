@@ -18,6 +18,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ITallerParticipanteRepository, TallerParticipanteRepository>();
 builder.Services.AddScoped<IHorarioRepository, HorarioRepositoy>();
 builder.Services.AddScoped<ITallerRepository, TallerRepository>();
+builder.Services.AddScoped<ITallerProgramacionRepository, TallerProgramacionRepository>();
+builder.Services.AddScoped<IPublicoRepository, PublicoRepository>();
+builder.Services.AddScoped<IPatrocinadorRepository, PatrocinadorRepository>();
 
 builder.Services.AddDbContext<TallerContext>(options =>
 {

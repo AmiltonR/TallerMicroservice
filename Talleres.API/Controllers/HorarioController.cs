@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Talleres.API.Repository;
 using Talleres.Domain.DTOs;
 using Talleres.Domain.Models.DTOs;
-using Talleres.Domain.Models.DTOs.GetDTOs;
-using Talleres.Domain.Models.DTOs.PostDTO;
 
 namespace Talleres.API.Controllers
 {

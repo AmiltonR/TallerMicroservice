@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Talleres.Domain.Entities;
-using Talleres.Domain.Models.DTOs.GetDTOs;
-using Talleres.Domain.Models.DTOs.PostDTO;
+using Talleres.Domain.Models.DTOs;
 using Talleres.Infrastructure;
 
 namespace Talleres.API.Repository

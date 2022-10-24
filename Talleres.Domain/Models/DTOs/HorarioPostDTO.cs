@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Talleres.Domain.Models.DTOs.PostDTO
+namespace Talleres.Domain.Models.DTOs
 {
     public class HorarioPostDTO
     {

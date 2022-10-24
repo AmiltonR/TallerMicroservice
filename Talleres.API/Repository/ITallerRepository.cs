@@ -1,6 +1,4 @@
-﻿using Talleres.Domain.Models.DTOs.GenreralDTOs;
-using Talleres.Domain.Models.DTOs.GetDTOs;
-using Talleres.Domain.Models.DTOs.PostDTO;
+﻿using Talleres.Domain.Models.DTOs;
 
 namespace Talleres.API.Repository
 {
@@ -11,7 +9,7 @@ namespace Talleres.API.Repository
         //Get By Id Method
         Task<TallerDTO> GetTallerById(int id);
         //Post Method
-        Task<bool>PostTaller(TallerPostDTO tallerInsert);
+        Task<bool> PostTaller(TallerPostDTO tallerInsert);
         //Put Method
         Task<bool> PutTaller(TallerDTO horarioTaller);
         //Delete Method

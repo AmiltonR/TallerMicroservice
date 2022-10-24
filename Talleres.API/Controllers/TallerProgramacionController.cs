@@ -8,47 +8,48 @@ namespace Talleres.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TallerController : ControllerBase
+    public class TallerProgramacionController : ControllerBase
     {
         protected ResponseDTO _responseDTO;
         protected ResponseVoidDTO _responseVoidDTO;
-        private ITallerRepository _tallerRepository;
+        private ITallerProgramacionRepository _tallerProgramacionRepository;
 
-        public TallerController(ITallerRepository tallerRepository)
+        public TallerProgramacionController(ITallerProgramacionRepository tallerRepository)
         {
             _responseDTO = new ResponseDTO();
             _responseVoidDTO = new ResponseVoidDTO();
-            _tallerRepository = tallerRepository;
+            _tallerProgramacionRepository = tallerRepository;
         }
 
         [HttpGet]
         public async Task<Object> Get()
         {
-            IEnumerable<TallerDTO> tallerList = null;
+            IEnumerable<TallerProgramacionGetDTO> tallerList = null;
             try
             {
-                tallerList = await _tallerRepository.GetTalleres();
-                _responseDTO.Result = tallerList;
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Taller";
+                //Envío de Lista
+                tallerList = await _tallerProgramacionRepository.GetTalleres();
+                //_responseDTO.Result = tallerList;
+                //_responseDTO.Success = true;
+                //_responseDTO.Message = "Taller";
             }
             catch (Exception ex)
             {
-                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.Message = "Algo ocurió :(";
                 _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
                 throw;
             }
-            return Ok(_responseDTO);
+            return Ok(tallerList);
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<Object> GetById(int id)
         {
-            TallerDTO tallerDto = null;
+            TallerProgramacionGetDTO tallerDto = null;
             try
             {
-                tallerDto = await _tallerRepository.GetTallerById(id);
+                tallerDto = await _tallerProgramacionRepository.GetTallerById(id);
                 _responseDTO.Result = tallerDto;
                 _responseDTO.Success = true;
                 _responseDTO.Message = "Taller";
@@ -63,16 +64,20 @@ namespace Talleres.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Object> Post(TallerPostDTO tallerPost)
+        public async Task<Object> Post(TallerProgramacionPostDTO tallerPost)
         {
-            TallerPostDTO taller = tallerPost;
+            TallerProgramacionPostDTO taller = tallerPost;
             try
             {
-                bool flag = await _tallerRepository.PostTaller(taller);
+                bool flag = await _tallerProgramacionRepository.PostTaller(taller);
                 if (flag)
                 {
                     _responseVoidDTO.Success = true;
-                    _responseVoidDTO.Message = "Datos guardados. ¡Ha Programado un Nuevo Taller!";
+                    _responseVoidDTO.Message = "Datos guardados. ¡Ha programado un Taller!";
+                }
+                else
+                {
+                    _responseVoidDTO.Message = "Ya existe un Taller con ese título";
                 }
             }
             catch (Exception ex)
@@ -84,15 +89,15 @@ namespace Talleres.API.Controllers
         }
 
         [HttpPut]
-        public async Task<Object> Put(TallerDTO tallerPut)
+        public async Task<Object> Put(TallerProgramacionPutDTO tallerPut)
         {
             try
             {
-                bool flag = await _tallerRepository.PutTaller(tallerPut);
+                bool flag = await _tallerProgramacionRepository.PutTaller(tallerPut);
                 if (flag)
                 {
                     _responseVoidDTO.Success = true;
-                    _responseVoidDTO.Message = "Datos del Taller Actualizados";
+                    _responseVoidDTO.Message = "Datos de la programacion del Taller Actualizados";
                 }
             }
             catch (Exception ex)
@@ -109,16 +114,16 @@ namespace Talleres.API.Controllers
         {
             try
             {
-                bool flag = await _tallerRepository.DeleteTaller(id);
+                bool flag = await _tallerProgramacionRepository.DeleteTaller(id);
                 if (flag)
                 {
                     _responseVoidDTO.Success = true;
-                    _responseVoidDTO.Message = "Taller Eliminado";
+                    _responseVoidDTO.Message = "Programación de Taller Eliminado";
                 }
                 else
                 {
                     _responseVoidDTO.Success = false;
-                    _responseVoidDTO.Message = "No puede Eliminar el taller porque hay talleres programados";
+                    _responseVoidDTO.Message = "No puede Eliminar el taller porque está activo";
                 }
             }
             catch (Exception ex)

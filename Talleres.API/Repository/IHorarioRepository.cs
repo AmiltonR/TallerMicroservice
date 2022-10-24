@@ -1,5 +1,4 @@
-﻿using Talleres.Domain.Models.DTOs.GetDTOs;
-using Talleres.Domain.Models.DTOs.PostDTO;
+﻿using Talleres.Domain.Models.DTOs;
 
 namespace Talleres.API.Repository
 {

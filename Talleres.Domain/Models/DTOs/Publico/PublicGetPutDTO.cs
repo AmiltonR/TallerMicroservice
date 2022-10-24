@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Talleres.Domain.Models.DTOs.GenreralDTOs
+namespace Talleres.Domain.Models.DTOs.Publico
 {
-    public class TallerDTO
+    public class PublicGetPutDTO
     {
         public int Id { get; set; }
-        public string NombreTaller { get; set; }
+        public int EdadMinima { get; set; }
+        public int EdadMaxima { get; set; }
         public string Descripcion { get; set; }
     }
 }
