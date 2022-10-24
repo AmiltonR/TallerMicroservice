@@ -15,6 +15,6 @@ namespace Talleres.API.Repository
         //Delete Method
         Task<bool> DeleteTaller(int id);
         //Set inactive method --UPDATE
-        Task<bool> SetInactive(int id);
+        Task<bool> SetInactive(int Id, int op);
     }
 }

@@ -42,6 +42,9 @@ namespace Talleres.API
                 //PUT
                 config.CreateMap<TallerProgramacion, TallerProgramacionPutDTO>();
                 config.CreateMap<TallerProgramacionPutDTO, TallerProgramacion>();
+                //PUT
+                config.CreateMap<TallerProgramacion, TallerProgramacionDeleteDTO>();
+                config.CreateMap<TallerProgramacionDeleteDTO, TallerProgramacion>();
                 //PUBLICO
                 //GET
                 config.CreateMap<Publico, PublicGetPutDTO>();

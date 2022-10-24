@@ -124,9 +124,44 @@ namespace Talleres.API.Repository
             return flag;
         }
 
-        public async Task<bool> SetInactive(int id)
+        public async Task<bool> SetInactive(int Id, int op)
         {
-            throw new NotImplementedException();
+            //Utilicese cuando 
+            int _Id = Id;
+            int option = op;
+            bool flag = false;
+            try
+            {
+                TallerProgramacionDeleteDTO tallerSetInactive = null;
+                if (op == 0)
+                {
+                    tallerSetInactive = new TallerProgramacionDeleteDTO
+                    {
+                        Id = _Id,
+                        Estado = 0
+                    };
+                }
+                else
+                {
+                    tallerSetInactive = new TallerProgramacionDeleteDTO
+                    {
+                        Id = _Id,
+                        Estado = 1
+                    };
+                }
+
+                TallerProgramacion tallerP = _mapper.Map<TallerProgramacionDeleteDTO, TallerProgramacion>(tallerSetInactive);
+                _db.TallerProgramaciones.Attach(tallerP);
+                _db.Entry(tallerP).Property(x => x.Estado).IsModified = true;
+                _db.SaveChanges();
+
+                flag = true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return flag;
         }
     }
 }
