@@ -10,6 +10,14 @@ namespace Talleres.Domain.Entities
 {
     public class TallerProgramacion
     {
+        //ESTA ENTIDAD ES LA MÁS IMPORTANTE
+        //EN EL DESSARROLLO DE ESTE MICROSERVICIO
+
+        //Se definirá sobre cada atributo aquel que no sea 
+        //imprescindible su envio desde el frontend
+
+        //Vease la clase TallerProgramacionPostDTO en Talleres.Domain.Models.DTOs
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -21,6 +29,7 @@ namespace Talleres.Domain.Entities
         [Required]
         public DateTime FechaInicio { get; set; }
         [Required]
+        //NO SE requiere este dato como parámetro
         public DateTime FechaFinal { get; set; }
         [Required]
         public int NumeroParticipantes { get; set; }
@@ -35,6 +44,7 @@ namespace Talleres.Domain.Entities
         [Required]
         public int NumeroSesiones { get; set; }
         [Required]
+        //No se requiere este dato como parámetro
         public int Estado { get; set; } = 1;
 
         //Laves foráneas

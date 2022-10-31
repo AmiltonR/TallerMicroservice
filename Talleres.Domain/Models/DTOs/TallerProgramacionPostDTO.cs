@@ -13,7 +13,6 @@ namespace Talleres.Domain.Models.DTOs
         public int IdTaller { get; set; }
         public int IdUsuarioInstructor { get; set; }
         public DateTime FechaInicio { get; set; }
-        public DateTime FechaFinal { get; set; }
         public int NumeroParticipantes { get; set; }
         public int IdPublico { get; set; }
         public double Costo { get; set; }
