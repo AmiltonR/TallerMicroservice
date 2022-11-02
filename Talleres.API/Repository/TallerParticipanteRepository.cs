@@ -17,10 +17,13 @@ namespace Talleres.API.Repository
             _db = db;
         }
 
-        public async Task<IEnumerable<TallerParticipanteGetDTO>> GetTallerParticipantes()
+        //Devuelve los participantes de un taller dado
+        //verificar implicación en agregado
+        public async Task<IEnumerable<TallerParticipanteGetDTO>> GetTallerParticipantes(int id)
         {
+            List<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes
+                                                                .Where(t => t.IdTallerProgramacion == id).ToListAsync();
 
-            List<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes.ToListAsync();
             return _mapper.Map<List<TallerParticipanteGetDTO>>(tallerParticipanteList);
         }
     }

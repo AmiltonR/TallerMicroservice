@@ -39,6 +39,46 @@ namespace Talleres.API.Repository
             return flag;
         }
 
+        //Get all active talleres
+        public async Task<IEnumerable<TallerProgramacionGetDTO>> GetActiveTalleres()
+        {
+            List<TallerProgramacionGetDTO> talleres = new List<TallerProgramacionGetDTO>();
+            try
+            {
+                //Revisar Order By en respuesta con PostMan
+                List<TallerProgramacion> talleresList = await _db.TallerProgramaciones.Include(t => t.publico).
+                                                                    Include(t => t.patrocinador).
+                                                                    Include(t => t.taller).OrderByDescending(t => t.IdTaller)
+                                                                    .Where(t => t.Estado == 1).ToListAsync();//order by descending 
+                //Recorremos el arreglo
+                TallerProgramacionGetDTO tallerForEach = null;
+                foreach (var item in talleresList)
+                {
+                    tallerForEach = new TallerProgramacionGetDTO
+                    {
+                        Id = item.Id,
+                        IdTaller = item.IdTaller,
+                        NombreTaller = item.taller.NombreTaller,
+                        IdUsuarioInstructor = item.IdUsuarioInstructor,
+                        NombreUsuario = "Pending...",
+                        FechaInicio = item.FechaInicio,
+                        FechaFinal = item.FechaFinal,
+                        NumeroParticipantes = item.NumeroParticipantes,
+                        Publico = item.publico.Descripcion,
+                        Costo = item.Costo,
+                        NombrePatrocinador = item.patrocinador.NombrePatrocinador,
+                        NumeroSesiones = item.NumeroSesiones
+                    };
+                    talleres.Add(tallerForEach);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return talleres;
+        }
+
         public async Task<TallerProgramacionGetDTO> GetTallerById(int id)
         {
             TallerProgramacionGetDTO? tallerDto = null;
@@ -54,35 +94,129 @@ namespace Talleres.API.Repository
             return tallerDto;
         }
 
+        //Get all talleres
         public async Task<IEnumerable<TallerProgramacionGetDTO>> GetTalleres()
         {
-            List<TallerProgramacion> talleresList = await _db.TallerProgramaciones.Include(t => t.publico).
-                                                                Include(t => t.patrocinador).
-                                                                Include(t => t.taller).ToListAsync();
             List<TallerProgramacionGetDTO> talleres = new List<TallerProgramacionGetDTO>();
-            TallerProgramacionGetDTO tallerForEach = null;
-            foreach (var item in talleresList)
+            try
             {
-                tallerForEach = new TallerProgramacionGetDTO
+                //Revisar Order By en respuesta con PostMan
+                List<TallerProgramacion> talleresList = await _db.TallerProgramaciones.Include(t => t.publico).
+                                                                    Include(t => t.patrocinador).
+                                                                    Include(t => t.taller).OrderByDescending(t => t.IdTaller).ToListAsync();//order by descending 
+                //Recorremos el arreglo
+                TallerProgramacionGetDTO tallerForEach = null;
+                foreach (var item in talleresList)
                 {
-                    Id = item.Id,
-                    IdTaller = item.IdTaller,
-                    NombreTaller = item.taller.NombreTaller,
-                    IdUsuarioInstructor = item.IdUsuarioInstructor,
-                    NombreUsuario = "Pending...",
-                    FechaInicio = item.FechaInicio,
-                    FechaFinal = item.FechaFinal,
-                    NumeroParticipantes = item.NumeroParticipantes,
-                    Publico = item.publico.Descripcion,
-                    Costo = item.Costo,
-                    NombrePatrocinador = item.patrocinador.NombrePatrocinador,
-                    NumeroSesiones = item.NumeroSesiones
-                };
-                talleres.Add(tallerForEach);
+                    tallerForEach = new TallerProgramacionGetDTO
+                    {
+                        Id = item.Id,
+                        IdTaller = item.IdTaller,
+                        NombreTaller = item.taller.NombreTaller,
+                        IdUsuarioInstructor = item.IdUsuarioInstructor,
+                        NombreUsuario = "Pending...",
+                        FechaInicio = item.FechaInicio,
+                        FechaFinal = item.FechaFinal,
+                        NumeroParticipantes = item.NumeroParticipantes,
+                        Publico = item.publico.Descripcion,
+                        Costo = item.Costo,
+                        NombrePatrocinador = item.patrocinador.NombrePatrocinador,
+                        NumeroSesiones = item.NumeroSesiones
+                    };
+                    talleres.Add(tallerForEach);
+                }
             }
-           
-            
+            catch (Exception)
+            {
+                throw;
+            }
             return talleres;
+        }
+
+        //Traer el taller activo donde está el estudiante
+        public async Task<TallerProgramacionGetEstudianteDTO> GetTallerByUser(int idUsuario)
+        {
+            TallerProgramacionGetEstudianteDTO taller = null;
+            try
+            {
+                //Traemos todos los id de los talleres en donde esté el usuario x
+                IEnumerable<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes.Where(t => t.IdUsuario == idUsuario).ToListAsync();
+
+                //Traemos de tallerProgramacion la data haciendo uso de los id extraidos
+
+                TallerProgramacion? tallerProgramacion = null;
+
+                foreach (var item in tallerParticipanteList)
+                {
+                    tallerProgramacion = await _db.TallerProgramaciones.Where(t => t.Id == item.IdTallerProgramacion)
+                                                                        .Include(t => t.publico)
+                                                                        .Include(t => t.taller).FirstOrDefaultAsync();
+
+                    //verificar si el taller está activo detenemos la iteración, sino, seguimos buscando el taller activo
+                    if (tallerProgramacion.Estado == 1)
+                    {
+                        break;
+                    }
+                }
+
+                taller = new TallerProgramacionGetEstudianteDTO
+                {
+                    Id = tallerProgramacion.Id,
+                    IdTaller = tallerProgramacion.IdTaller,
+                    NombreTaller = tallerProgramacion.taller.NombreTaller,
+                    IdUsuarioInstructor = tallerProgramacion.IdUsuarioInstructor,
+                    NombreUsuario = "Pending...",
+                    FechaInicio = tallerProgramacion.FechaInicio,
+                    FechaFinal = tallerProgramacion.FechaFinal,
+                    NumeroParticipantes = tallerProgramacion.NumeroParticipantes,
+                    Publico = tallerProgramacion.publico.Descripcion,
+                    NumeroSesiones = tallerProgramacion.NumeroSesiones
+                };
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return taller;
+        }
+
+        public async Task<IEnumerable<TallerProgramacionGetEstudianteDTO>> GetTalleresByUser(int idUsuario)
+        {
+            List<TallerProgramacionGetEstudianteDTO> tallerList = new List<TallerProgramacionGetEstudianteDTO>();
+            try
+            {
+                //Traemos todos los id de los talleres en donde esté el usuario x
+                IEnumerable<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes.Where(t => t.IdUsuario == idUsuario).ToListAsync();
+
+                //Traemos de tallerProgramacion la data haciendo uso de los id extraidos
+                TallerProgramacion? tallerProgramacion = null;
+                TallerProgramacionGetEstudianteDTO tallerForeach = null;
+                foreach (var item in tallerParticipanteList)
+                {
+                    tallerProgramacion = await _db.TallerProgramaciones.Where(t => t.Id == item.IdTallerProgramacion).FirstOrDefaultAsync();
+
+                    tallerForeach = new TallerProgramacionGetEstudianteDTO
+                    {
+                        Id = tallerProgramacion.Id,
+                        IdTaller = tallerProgramacion.IdTaller,
+                        NombreTaller = tallerProgramacion.taller.NombreTaller,
+                        IdUsuarioInstructor = tallerProgramacion.IdUsuarioInstructor,
+                        NombreUsuario = "Pending...",
+                        FechaInicio = tallerProgramacion.FechaInicio,
+                        FechaFinal = tallerProgramacion.FechaFinal,
+                        NumeroParticipantes = tallerProgramacion.NumeroParticipantes,
+                        Publico = tallerProgramacion.publico.Descripcion,
+                        NumeroSesiones = tallerProgramacion.NumeroSesiones
+                    };
+                    tallerList.Add(tallerForeach);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return tallerList;
         }
 
         public async Task<bool> PostTaller(TallerProgramacionPostDTO tallerInsert)
@@ -163,5 +297,7 @@ namespace Talleres.API.Repository
             }
             return flag;
         }
+
+        
     }
 }

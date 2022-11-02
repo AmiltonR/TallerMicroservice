@@ -19,12 +19,12 @@ namespace Talleres.API.Controllers
         }
 
         [HttpGet]
-        public async Task<object> Get()
+        public async Task<object> Get(int id)
         {
             IEnumerable<TallerParticipanteGetDTO> tallerParticipante = null;
             try
             {
-                tallerParticipante = await _tallerParticipanteRepository.GetTallerParticipantes();
+                tallerParticipante = await _tallerParticipanteRepository.GetTallerParticipantes(id);
                 _response.Result = tallerParticipante;
             }
             catch (Exception ex)
