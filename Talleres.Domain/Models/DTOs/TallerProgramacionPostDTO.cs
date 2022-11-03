@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Talleres.Domain.Entities;
 
 namespace Talleres.Domain.Models.DTOs
 {
@@ -18,5 +19,11 @@ namespace Talleres.Domain.Models.DTOs
         public double Costo { get; set; }
         public int IdPatrocinador { get; set; }
         public int NumeroSesiones { get; set; }
+        //Lista de horarios. El taller se puede impartir en uno o más horarios
+        //Este atributo alimenta la entidad TallerHorario
+
+        //      |ID|IdTallerProgramacion|IdHorario|
+
+        public List<HorarioIdGet> Horarios { get; set; }
     }
 }

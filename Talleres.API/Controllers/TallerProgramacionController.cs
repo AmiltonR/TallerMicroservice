@@ -35,7 +35,7 @@ namespace Talleres.API.Controllers
             }
             catch (Exception ex)
             {
-                _responseDTO.Message = "Algo ocurió :(";
+                _responseDTO.Message = "Algo ocurrió :(";
                 _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
                 throw;
             }
@@ -69,8 +69,8 @@ namespace Talleres.API.Controllers
             TallerProgramacionPostDTO taller = tallerPost;
             try
             {
-                bool flag = await _tallerProgramacionRepository.PostTaller(taller);
-                if (flag)
+                int flag = await _tallerProgramacionRepository.PostTaller(taller);
+                if (flag == 1)
                 {
                     _responseVoidDTO.Success = true;
                     _responseVoidDTO.Message = "Datos guardados. ¡Ha programado un Taller!";

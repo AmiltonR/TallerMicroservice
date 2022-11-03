@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Talleres.API.Utilities;
 using Talleres.Domain.Entities;
 using Talleres.Domain.Models.DTOs;
 using Talleres.Infrastructure;
@@ -9,15 +10,18 @@ namespace Talleres.API.Repository
     public class TallerProgramacionRepository : ITallerProgramacionRepository
     {
         private readonly TallerContext _db;
+        private readonly CalcularFechaFinal _calcularFechaFinal;
         private IMapper _mapper;
 
-        public TallerProgramacionRepository(TallerContext db, IMapper mapper)
+        public TallerProgramacionRepository(TallerContext db, IMapper mapper, CalcularFechaFinal calcularFechaFinal)
         {
             _db = db;
             _mapper = mapper;
+            _calcularFechaFinal = calcularFechaFinal;
         }
         public async Task<bool> DeleteTaller(int id)
         {
+            //Comprobar que no tenga participantes
             bool flag = true;
             try
             {
@@ -219,18 +223,79 @@ namespace Talleres.API.Repository
             return tallerList;
         }
 
-        public async Task<bool> PostTaller(TallerProgramacionPostDTO tallerInsert)
+        public async Task<int> PostTaller(TallerProgramacionPostDTO tallerInsert)
         {
-            bool flag = false;
-
+            int flag = 0;
+            using var transaction = _db.Database.BeginTransaction();
             try
             {
-                TallerProgramacion tallerPost = _mapper.Map<TallerProgramacionPostDTO, TallerProgramacion>(tallerInsert);
-                _db.TallerProgramaciones.Add(tallerPost);
+                //*** Steps ***
+                //1. Verificar que no haya un taller Activo con el mismo idTaller?
+            //2. Iterar arreglo de Horarios y crear objetos para almacenar: IdHorario, Dias
+                List<Horario> horarios = new List<Horario>();
+                Horario horario = null;
+
+                //Recorremos el arreglo y creamos lista de Horarios
+                foreach (var item in tallerInsert.Horarios)
+                {
+                    horario = await _db.Horario.Where(h => h.Id == item.Id).FirstOrDefaultAsync();
+                    horarios.Add(horario);
+                }
+
+            //3. Calcular fecha Final con base en numero de sesiones
+                //Array para almacenar dias 
+                string[] diasTaller = new string[horarios.Count];
+
+                //Recorremos la lista de horarios y llenamos la lista de dias
+                int i = 0;
+                foreach (var item in horarios)
+                {
+                    diasTaller[i] = item.Dia;
+                    i++;
+                }
+
+                DateTime fechaFinal = _calcularFechaFinal.Calcular(diasTaller, tallerInsert.NumeroSesiones, tallerInsert.FechaInicio);
+
+                //4. Crear objeto TallerProgramacion y guardarlo
+                TallerProgramacion taller = new TallerProgramacion
+                {
+                    IdTaller = tallerInsert.IdTaller,
+                    IdUsuarioInstructor = tallerInsert.IdUsuarioInstructor,
+                    FechaInicio = tallerInsert.FechaInicio,
+                    FechaFinal = fechaFinal,
+                    NumeroParticipantes = tallerInsert.NumeroParticipantes,
+                    IdPublico = tallerInsert.IdPublico,
+                    Costo = tallerInsert.Costo,
+                    IdPatrocinador = tallerInsert.IdPatrocinador,
+                    NumeroSesiones = tallerInsert.NumeroSesiones
+                };
+
+                _db.TallerProgramaciones.Add(taller);
                 await _db.SaveChangesAsync();
-                flag = true;
-                //Enviar notificación de asignación de taller. Enviar nombre Taller y Horarios
-                //Crear DTOs Notificaiones?
+
+                //5. Traer el id del taller programacion recien guardado y Guardar lista de horarios
+                int idTallerProgramacion = _db.TallerProgramaciones.Max(t => t.Id);
+
+                foreach (var item in horarios)
+                {
+                    TallerHorario horarioTaller = new TallerHorario
+                    {
+                        IdHorario = item.Id,
+                        IdTallerProgramacion = idTallerProgramacion
+                    };
+                    _db.TallerHorarios.Add(horarioTaller);
+                    await _db.SaveChangesAsync();
+                }
+
+                //Pasos siguientes:
+                //  1. Agregar participantes (Mientras no se logre el numero de participantes límite)
+                //  2. Enviar notificación de asignación de taller. Enviar nombre Taller y Horarios
+                //  3. Crear DTOs Notificaciones?
+
+
+                transaction.Commit();
+                flag = 1;
+                
             }
             catch (Exception)
             {

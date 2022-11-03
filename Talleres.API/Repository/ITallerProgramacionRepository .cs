@@ -10,7 +10,7 @@ namespace Talleres.API.Repository
         //Get By Id Method
         Task<TallerProgramacionGetDTO> GetTallerById(int id);
         //Post Method
-        Task<bool> PostTaller(TallerProgramacionPostDTO tallerInsert);
+        Task<int> PostTaller(TallerProgramacionPostDTO tallerInsert);
         //Put Method
         Task<bool> PutTaller(TallerProgramacionPutDTO tallerUpdate);
         //Delete Method

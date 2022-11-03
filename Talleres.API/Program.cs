@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Talleres.API;
 using Talleres.API.Repository;
+using Talleres.API.Utilities;
 using Talleres.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddScoped<ITallerRepository, TallerRepository>();
 builder.Services.AddScoped<ITallerProgramacionRepository, TallerProgramacionRepository>();
 builder.Services.AddScoped<IPublicoRepository, PublicoRepository>();
 builder.Services.AddScoped<IPatrocinadorRepository, PatrocinadorRepository>();
+builder.Services.AddSingleton<CalcularFechaFinal>();
 
 builder.Services.AddDbContext<TallerContext>(options =>
 {
