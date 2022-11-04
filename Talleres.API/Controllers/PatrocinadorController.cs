@@ -124,8 +124,8 @@ namespace Talleres.API.Controllers
             return Ok(_responseDTO);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
+       // [Route("{id}")]
         public async Task<Object> Delete(int id)
         {
             bool flag = false;
