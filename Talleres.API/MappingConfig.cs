@@ -60,8 +60,8 @@ namespace Talleres.API
                 config.CreateMap<Patrocinador, PatrocinadorGetPutDTO>();
                 config.CreateMap<PatrocinadorGetPutDTO, Patrocinador>();
                 //POST
-                config.CreateMap<Patrocinador, PublicoPostDTO>();
-                config.CreateMap<PublicoPostDTO, Patrocinador>();
+                config.CreateMap<Patrocinador, PatrocinadorPostDTO>();
+                config.CreateMap<PatrocinadorPostDTO, Patrocinador>();
                 //PUT
                 config.CreateMap<Patrocinador, PatrocinadorGetPutDTO>();
                 config.CreateMap<PatrocinadorGetPutDTO, Patrocinador>();

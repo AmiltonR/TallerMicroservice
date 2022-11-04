@@ -107,7 +107,7 @@ namespace Talleres.API.Repository
                 //Revisar Order By en respuesta con PostMan
                 List<TallerProgramacion> talleresList = await _db.TallerProgramaciones.Include(t => t.publico).
                                                                     Include(t => t.patrocinador).
-                                                                    Include(t => t.taller).OrderByDescending(t => t.IdTaller).ToListAsync();//order by descending 
+                                                                    Include(t => t.taller).OrderByDescending(t => t.IdTaller).OrderByDescending(t => t.Id).ToListAsync();//order by descending 
                 //Recorremos el arreglo
                 TallerProgramacionGetDTO tallerForEach = null;
                 foreach (var item in talleresList)

@@ -56,7 +56,7 @@ namespace Talleres.API.Controllers
                 {
                     _responseDTO.Result = patrocinadorDTO;
                     _responseDTO.Success = true;
-                    _responseDTO.Message = "Publicos";
+                    _responseDTO.Message = "Patrocinador";
                 }
                 else
                 {
@@ -113,6 +113,33 @@ namespace Talleres.API.Controllers
                 else
                 {
                     _responseDTO.Message = "ocurrió un error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<Object> Delete(int id)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _patrocinadorRepository.DeletePatrocinador(id);
+                if (flag)
+                {
+                    _responseDTO.Success = true;
+                    _responseDTO.Message = "Ha eliminado el registro de patrocinador";
+                }
+                else
+                {
+                    _responseDTO.Message = "No se puede eliminar el registro porque está vinculado con la programación de un taller";
                 }
             }
             catch (Exception ex)

@@ -18,9 +18,20 @@ namespace Talleres.API.Repository
             _mapper = mapper;
         }
 
-        public Task<bool> DeletePatrocinador(int id)
+        public async Task<bool> DeletePatrocinador(int id)
         {
-            throw new NotImplementedException();
+            bool existePatrocinador = _db.TallerProgramaciones.Any(t => t.IdPatrocinador == id);
+            if (!existePatrocinador)
+            {
+                Patrocinador patrocinador = await _db.Patrocinadores.Where(p => p.Id == id).FirstOrDefaultAsync();
+                _db.Patrocinadores.Remove(patrocinador);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<PatrocinadorGetPutDTO>> GetPatrocinadores()
@@ -68,7 +79,7 @@ namespace Talleres.API.Repository
 
                 throw;
             }
-            return false;   
+            return flag;   
         }
     }
 }
