@@ -39,7 +39,7 @@ namespace Talleres.API.Repository
 
         public async Task<IEnumerable<TallerDTO>> GetTalleres()
         {
-            List<Taller> talleresList = await _db.Talleres.ToListAsync();
+            List<Taller> talleresList = await _db.Talleres.OrderBy(t => t.NombreTaller).ToListAsync();
             return _mapper.Map<List<TallerDTO>>(talleresList);
 
         }

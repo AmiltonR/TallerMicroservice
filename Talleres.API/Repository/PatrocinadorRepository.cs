@@ -29,19 +29,46 @@ namespace Talleres.API.Repository
             return _mapper.Map<List<PatrocinadorGetPutDTO>>(patrocinadorList);
         }
 
-        public Task<PatrocinadorGetPutDTO> GetPatrocinadorById(int id)
+        public async Task<PatrocinadorGetPutDTO> GetPatrocinadorById(int id)
         {
-            throw new NotImplementedException();
+            Patrocinador patrocinador = await _db.Patrocinadores.Where(p => p.Id == id).FirstOrDefaultAsync();
+            return _mapper.Map<PatrocinadorGetPutDTO>(patrocinador);
         }
 
-        public Task<bool> PostPatrocinador(PatrocinadorPostDTO patrocinadorInsert)
+        public async Task<bool> PostPatrocinador(PatrocinadorPostDTO patrocinadorInsert)
         {
-            throw new NotImplementedException();
+            bool flag = false;
+            try
+            {
+                Patrocinador patrocinador = _mapper.Map<PatrocinadorPostDTO, Patrocinador>(patrocinadorInsert);
+                _db.Patrocinadores.Add(patrocinador);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return flag;
         }
 
-        public Task<bool> PutPatrocinador(PatrocinadorGetPutDTO patrocinadorUpdate)
+        public async Task<bool> PutPatrocinador(PatrocinadorGetPutDTO patrocinadorUpdate)
         {
-            throw new NotImplementedException();
+            bool flag = false;
+            try
+            {
+                Patrocinador patrocinador = _mapper.Map<PatrocinadorGetPutDTO, Patrocinador>(patrocinadorUpdate);
+                _db.Patrocinadores.Update(patrocinador);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return false;   
         }
     }
 }

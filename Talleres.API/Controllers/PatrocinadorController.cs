@@ -42,5 +42,86 @@ namespace Talleres.API.Controllers
             }
             return Ok(_responseDTO);
         }
+
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<Object> GetById(int id)
+        {
+            PatrocinadorGetPutDTO patrocinadorDTO = null;
+            try
+            {
+                patrocinadorDTO = await _patrocinadorRepository.GetPatrocinadorById(id);
+                if (patrocinadorDTO!=null)
+                {
+                    _responseDTO.Result = patrocinadorDTO;
+                    _responseDTO.Success = true;
+                    _responseDTO.Message = "Publicos";
+                }
+                else
+                {
+                    _responseDTO.Message = "No existe el patrocinador";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
+
+        [HttpPost]
+        public async Task<Object> Post(PatrocinadorPostDTO patrocinador)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _patrocinadorRepository.PostPatrocinador(patrocinador);
+                if (flag)
+                {
+                    _responseDTO.Success = true;
+                    _responseDTO.Message = "Ha insertado un nuevo registro de patrocinador";
+                }
+                else
+                {
+                    _responseDTO.Message = "ocurrió un error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
+
+        [HttpPut]
+        public async Task<Object> Put(PatrocinadorGetPutDTO patrocinador)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _patrocinadorRepository.PutPatrocinador(patrocinador);
+                if (flag)
+                {
+                    _responseDTO.Success = true;
+                    _responseDTO.Message = "Ha actualizado el registro de patrocinador";
+                }
+                else
+                {
+                    _responseDTO.Message = "ocurrió un error";
+                }
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
     }
 }
