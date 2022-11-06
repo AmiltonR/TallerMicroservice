@@ -40,7 +40,7 @@
             }
 
             //Estableciendo dia de inicio y traduciéndolo al español
-            int diaInicio = fechaInicio.Day;
+            int diaInicio = (int)fechaInicio.DayOfWeek;
             string diaInicString = String.Empty;
             //Traducir de inglés a español
 
