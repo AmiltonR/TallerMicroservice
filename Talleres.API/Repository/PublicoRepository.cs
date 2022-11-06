@@ -17,28 +17,53 @@ namespace Talleres.API.Repository
             _db = db;
             _mapper = mapper;
         }
-        public Task<bool> DeletePublico(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PublicGetPutDTO> GetPublicoById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<PublicGetPutDTO>> GetPublicos()
         {
             List<Publico> publicoList = await _db.Publicos.ToListAsync();
             return _mapper.Map<List<PublicGetPutDTO>>(publicoList);
         }
-
-        public Task<bool> PostPublico(PublicoPostDTO publicoInsert)
+        public async Task<PublicGetPutDTO> GetPublicoById(int id)
         {
-            throw new NotImplementedException();
+            Publico publico = await _db.Publicos.Where(p => p.Id == id).FirstOrDefaultAsync();
+            PublicGetPutDTO publicoGet = _mapper.Map<PublicGetPutDTO>(publico);
+            return publicoGet;
+        }
+        public async Task<bool> PostPublico(PublicoPostDTO publicoInsert)
+        {
+            bool flag = false;
+            try
+            {
+                Publico publico = _mapper.Map<PublicoPostDTO, Publico>(publicoInsert);
+                _db.Publicos.Add(publico);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return flag;
         }
 
-        public Task<bool> PutPublico(PublicGetPutDTO publicoUpdate)
+        public async Task<bool> PutPublico(PublicGetPutDTO publicoUpdate)
+        {
+            bool flag = false;
+            try
+            {
+                Publico publicoPut = _mapper.Map<PublicGetPutDTO, Publico>(publicoUpdate);
+                _db.Publicos.Update(publicoPut);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return flag;
+        }
+        public Task<bool> DeletePublico(int id)
         {
             throw new NotImplementedException();
         }

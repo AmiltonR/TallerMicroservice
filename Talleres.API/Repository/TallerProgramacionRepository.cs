@@ -272,6 +272,8 @@ namespace Talleres.API.Repository
 
                 _db.TallerProgramaciones.Add(taller);
                 await _db.SaveChangesAsync();
+                //Prueba de envío de correo
+                
 
                 //5. Traer el id del taller programacion recien guardado y Guardar lista de horarios
                 int idTallerProgramacion = _db.TallerProgramaciones.Max(t => t.Id);
@@ -290,6 +292,10 @@ namespace Talleres.API.Repository
                 //Pasos siguientes:
                 //  1. Agregar participantes (Mientras no se logre el numero de participantes límite)
                 //  2. Enviar notificación de asignación de taller. Enviar nombre Taller y Horarios
+
+
+                    //Recuperar el usuario?
+                //EmailSender.Principal("¡Se le ha asignado a un Taller! Ingrese a la app para más detalles");
                 //  3. Crear DTOs Notificaciones?
 
 
