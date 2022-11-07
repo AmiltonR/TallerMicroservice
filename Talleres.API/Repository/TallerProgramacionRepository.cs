@@ -312,6 +312,8 @@ namespace Talleres.API.Repository
 
         public async Task<bool> PutTaller(TallerProgramacionPutDTO tallerUpdate)
         {
+            //Pedir autorización en el frontend si la fecha de inicio que se pretende cambiar 
+            //Es diferente
             bool flag = false;
             try
             {
