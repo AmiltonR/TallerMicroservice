@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Talleres.API.Utilities;
 using Talleres.Domain.Entities;
@@ -25,16 +26,9 @@ namespace Talleres.API.Repository
             bool flag = true;
             try
             {
-                TallerProgramacion? taller = await _db.TallerProgramaciones.FirstOrDefaultAsync(t => t.Id == id);
-                if(taller.Estado == 1)
-                {
-                    flag = false;
-                }
-                else
-                {
-                    _db.TallerProgramaciones.Remove(taller);
-                    await _db.SaveChangesAsync();
-                }
+                TallerProgramacion taller = await _db.TallerProgramaciones.FirstOrDefaultAsync(t => t.Id == id);
+                bool hasParticipantes = _db.TallerParticipantes.Any(p => p.IdTallerProgramacion == id);
+               //pending
             }
             catch (Exception)
             {
@@ -65,8 +59,8 @@ namespace Talleres.API.Repository
                         NombreTaller = item.taller.NombreTaller,
                         IdUsuarioInstructor = item.IdUsuarioInstructor,
                         NombreUsuario = "Pending...",
-                        FechaInicio = item.FechaInicio,
-                        FechaFinal = item.FechaFinal,
+                        FechaInicio = item.FechaInicio.ToShortDateString(),
+                        FechaFinal = item.FechaFinal.ToShortDateString(),
                         NumeroParticipantes = item.NumeroParticipantes,
                         Publico = item.publico.Descripcion,
                         Costo = item.Costo,
@@ -85,11 +79,26 @@ namespace Talleres.API.Repository
 
         public async Task<TallerProgramacionGetDTO> GetTallerById(int id)
         {
-            TallerProgramacionGetDTO? tallerDto = null;
+            TallerProgramacionGetDTO tallerDto = null;
             try
             {
-                TallerProgramacion? taller = await _db.TallerProgramaciones.FirstOrDefaultAsync(h => h.Id == id);
-                tallerDto = _mapper.Map<TallerProgramacionGetDTO>(taller);
+                TallerProgramacion? taller = await _db.TallerProgramaciones.Include(t => t.patrocinador)
+                                                        .Include(t=>t.taller).Include(t => t.publico).FirstOrDefaultAsync(h => h.Id == id);
+                tallerDto = new TallerProgramacionGetDTO
+                {
+                    Id = taller.Id,
+                    IdTaller = taller.IdTaller,
+                    NombreTaller = taller.taller.NombreTaller,
+                    IdUsuarioInstructor = taller.IdUsuarioInstructor,
+                    NombreUsuario = String.Empty,
+                    FechaInicio = taller.FechaInicio.ToShortDateString(),
+                    FechaFinal = taller.FechaFinal.ToShortDateString(),
+                    NumeroParticipantes = taller.NumeroParticipantes,
+                    Publico = taller.publico.Descripcion,
+                    Costo = taller.Costo,
+                    NombrePatrocinador = taller.patrocinador.NombrePatrocinador,
+                    NumeroSesiones = taller.NumeroSesiones
+                };
             }
             catch (Exception)
             {
@@ -119,8 +128,8 @@ namespace Talleres.API.Repository
                         NombreTaller = item.taller.NombreTaller,
                         IdUsuarioInstructor = item.IdUsuarioInstructor,
                         NombreUsuario = "Pending...",
-                        FechaInicio = item.FechaInicio,
-                        FechaFinal = item.FechaFinal,
+                        FechaInicio = item.FechaInicio.ToShortDateString(),
+                        FechaFinal = item.FechaFinal.ToShortDateString(),
                         NumeroParticipantes = item.NumeroParticipantes,
                         Publico = item.publico.Descripcion,
                         Costo = item.Costo,
