@@ -318,6 +318,26 @@ namespace Talleres.API.Repository
             try
             {
                 TallerProgramacion tallerPut = _mapper.Map<TallerProgramacionPutDTO, TallerProgramacion>(tallerUpdate);
+                List<Horario> horarios = new List<Horario>();
+                Horario horario = null;
+
+                foreach (var item in tallerUpdate.Horarios)
+                {
+                    horario = await _db.Horario.Where(h => h.Id == item.Id).FirstOrDefaultAsync();
+                    horarios.Add(horario);
+                }
+
+                string[] diasTaller = new string[horarios.Count];
+
+                int i = 0;
+                foreach (var item in horarios)
+                {
+                    diasTaller[i] = item.Dia;
+                    i++;
+                }
+
+                tallerPut.FechaFinal = _calcularFechaFinal.Calcular(diasTaller, tallerPut.NumeroSesiones, tallerPut.FechaInicio);
+
                 _db.TallerProgramaciones.Update(tallerPut);
                 await _db.SaveChangesAsync();
                 flag = true;
