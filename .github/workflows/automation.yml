@@ -17,4 +17,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           load: true
-          tags: latest, ${{ github.run_number }}
+          tags: latest
