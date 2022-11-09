@@ -16,5 +16,5 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          push: true
+          load: true
           tags: latest, ${{ github.run_number }}
