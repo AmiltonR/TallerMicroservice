@@ -17,5 +17,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           load: true
-          images: amiltonrod1998/TallerMicroservice
+          repository: amiltonrod1998/TallerMicroservice
           tags: latest
