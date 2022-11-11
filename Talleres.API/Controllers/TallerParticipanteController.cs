@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Talleres.API.Repository;
 using Talleres.Domain.DTOs;
+using Talleres.Domain.Models.DTOs;
 
 namespace Talleres.API.Controllers
 {
@@ -19,17 +20,16 @@ namespace Talleres.API.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         public async Task<object> Get(int id)
         {
-            IEnumerable<TallerParticipanteGetDTO> tallerParticipante = null;
+            IEnumerable<tallerParticipantesUsuariosDTO> tallerParticipante = null;
             try
             {
                 tallerParticipante = await _tallerParticipanteRepository.GetTallerParticipantes(id);
-                _response.Result = tallerParticipante;
             }
             catch (Exception ex)
             {
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return Ok(tallerParticipante);
         }

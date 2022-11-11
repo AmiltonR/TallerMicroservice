@@ -16,6 +16,8 @@ namespace Talleres.API
                 config.CreateMap<TallerParticipanteGetDTO, TallerParticipante>();
                 config.CreateMap<TallerParticipante, TallerParticipanteGetDTO>();
 
+                config.CreateMap<TallerParticipante, tallerParticipantesUsuariosDTO>();
+
                 //HORARIOS
                 //--GET Y PUT
                 config.CreateMap<Horario, HorarioGetPostPutDTO>();
