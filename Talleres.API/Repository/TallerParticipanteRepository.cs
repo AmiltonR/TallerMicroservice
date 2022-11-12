@@ -23,7 +23,7 @@ namespace Talleres.API.Repository
         public async Task<IEnumerable<tallerParticipantesUsuariosDTO>> GetTallerParticipantes(int id)
         {
             List<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes
-                                                                .Where(t => t.IdTallerProgramacion == id).ToListAsync();
+                                                                .Where(t => t.IdTallerProgramacion == id).Include(t => t.TallerProgramacion).ToListAsync();
 
             return _mapper.Map<List<tallerParticipantesUsuariosDTO>>(tallerParticipanteList);
         }
