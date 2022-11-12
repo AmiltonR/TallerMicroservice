@@ -6,15 +6,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: tallermicroservice
+      app: talleres
   template:
     metadata:
       labels:
-        app: tallermicroservice
+        app: talleres
     spec:
       containers:
       - name: talleres
-        image: tallermicroservice.azurecr.io/amiltonr/tallermicroservice:#{Build.BuildId}#
+        image: tallermicroservice.azurecr.io/amiltonr/tallermicroservice
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -26,7 +26,7 @@ metadata:
   name: taller-microservice-svc
 spec:
   selector:
-    app: tallermicroservice
+    app: talleres
   ports:
     - protocol: TCP
       port: 80
