@@ -23,10 +23,25 @@ namespace Talleres.API.Controllers
         [Route("{id}")]
         public async Task<object> Get(int id)
         {
-            IEnumerable<tallerParticipantesUsuariosDTO> tallerParticipante = null;
+            tallerParticipantesUsuariosResponseDTO tallerParticipante = null;
             try
             {
                 tallerParticipante = await _tallerParticipanteRepository.GetTallerParticipantes(id);
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(tallerParticipante);
+        }
+
+        [HttpGet]
+        [Route("noinscritos/{id}")]
+        public async Task<object> GetNoInscritos(int id)
+        {
+            List<tallerParticipantesUsuariosDTO> tallerParticipante = null;
+            try
+            {
+                tallerParticipante = await _tallerParticipanteRepository.GetTallerParticipantesNoIns(id);
             }
             catch (Exception ex)
             {

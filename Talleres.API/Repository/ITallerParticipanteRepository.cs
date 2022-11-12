@@ -5,7 +5,7 @@ namespace Talleres.API.Repository
 {
     public interface ITallerParticipanteRepository
     {
-        Task<IEnumerable<tallerParticipantesUsuariosDTO>> GetTallerParticipantes(int id);
-
+        Task<tallerParticipantesUsuariosResponseDTO> GetTallerParticipantes(int id);
+        Task<List<tallerParticipantesUsuariosDTO>> GetTallerParticipantesNoIns(int id);
     }
 }
