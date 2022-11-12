@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: talleres
-        image: tallermicroservice.azurecr.io/AmiltonR/TallerMicroservice:#{Build.BuildId}#
+        image: tallermicroservice.azurecr.io/AmiltonR/tallermicroservice
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 # service type loadbalancer       
