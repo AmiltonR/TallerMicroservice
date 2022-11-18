@@ -48,5 +48,26 @@ namespace Talleres.API.Controllers
             }
             return Ok(tallerParticipante);
         }
+
+        [HttpPost]
+        [Route("inscribir")]
+        public async Task<object> Post(TallerParticipantePostDTO tallerParticipantes)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _tallerParticipanteRepository.PostParticipantes(tallerParticipantes);
+                if (flag)
+                {
+                    _response.Success = true;
+                    _response.Message = "Participantes Inscritos";
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.Message = "Hubo un error";
+            }
+            return Ok(_response);
+        }
     }
 }

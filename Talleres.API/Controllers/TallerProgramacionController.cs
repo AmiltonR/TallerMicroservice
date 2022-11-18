@@ -43,6 +43,28 @@ namespace Talleres.API.Controllers
         }
 
         [HttpGet]
+        [Route("active")]
+        public async Task<Object> Getactive()
+        {
+            IEnumerable<TallerProgramacionGetDTO> tallerList = null;
+            try
+            {
+                //Envío de Lista
+                tallerList = await _tallerProgramacionRepository.GetActiveTalleres();
+                //_responseDTO.Result = tallerList;
+                //_responseDTO.Success = true;
+                //_responseDTO.Message = "Taller";
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(tallerList);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public async Task<Object> GetById(int id)
         {
@@ -56,7 +78,49 @@ namespace Talleres.API.Controllers
             }
             catch (Exception ex)
             {
-                _responseDTO.Message = "Algo ocurió :(";
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
+
+        [HttpGet]
+        [Route("instructor/{id}")]
+        public async Task<Object> GetByInstructor(int id)
+        {
+            List<TallerProgramacionGetDTO> tallerDto = null;
+            try
+            {
+                tallerDto = await _tallerProgramacionRepository.GetTalleresByInstructor(id);
+                _responseDTO.Result = tallerDto;
+                _responseDTO.Success = true;
+                _responseDTO.Message = "Talleres";
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
+                _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
+                throw;
+            }
+            return Ok(_responseDTO);
+        }
+
+        [HttpGet]
+        [Route("activo/estudiante/{id}")]
+        public async Task<Object> GetActivoByEstudiante(int id)
+        {
+            TallerProgramacionGetEstudianteDTO tallerDto = null;
+            try
+            {
+                tallerDto = await _tallerProgramacionRepository.GetTallerByUser(id);
+                _responseDTO.Result = tallerDto;
+                _responseDTO.Success = true;
+                _responseDTO.Message = "Taller";
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Message = "Algo ocurrió :(";
                 _responseDTO.ErrorMessages = new List<string>() { ex.ToString() };
                 throw;
             }

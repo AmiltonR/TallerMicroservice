@@ -46,8 +46,8 @@ namespace Talleres.API.Repository
                 //Revisar Order By en respuesta con PostMan
                 List<TallerProgramacion> talleresList = await _db.TallerProgramaciones.Include(t => t.publico).
                                                                     Include(t => t.patrocinador).
-                                                                    Include(t => t.taller).OrderByDescending(t => t.IdTaller)
-                                                                    .Where(t => t.Estado == 1).ToListAsync();//order by descending 
+                                                                    Include(t => t.taller)
+                                                                    .Where(t => t.Estado == 1).OrderByDescending(t => t.Id).ToListAsync();//order by descending 
                 //Recorremos el arreglo
                 TallerProgramacionGetDTO tallerForEach = null;
                 foreach (var item in talleresList)
@@ -161,31 +161,29 @@ namespace Talleres.API.Repository
 
                 foreach (var item in tallerParticipanteList)
                 {
-                    tallerProgramacion = await _db.TallerProgramaciones.Where(t => t.Id == item.IdTallerProgramacion)
+                    tallerProgramacion = await _db.TallerProgramaciones.Where(t => t.Id == item.IdTallerProgramacion && t.Estado == 1)
                                                                         .Include(t => t.publico)
                                                                         .Include(t => t.taller).FirstOrDefaultAsync();
-
-                    //verificar si el taller está activo detenemos la iteración, sino, seguimos buscando el taller activo
-                    if (tallerProgramacion.Estado == 1)
-                    {
-                        break;
-                    }
+                    
                 }
 
-                taller = new TallerProgramacionGetEstudianteDTO
+                //¿No hay Taller?
+                if (tallerProgramacion!=null)
                 {
-                    Id = tallerProgramacion.Id,
-                    IdTaller = tallerProgramacion.IdTaller,
-                    NombreTaller = tallerProgramacion.taller.NombreTaller,
-                    IdUsuarioInstructor = tallerProgramacion.IdUsuarioInstructor,
-                    NombreUsuario = "Pending...",
-                    FechaInicio = tallerProgramacion.FechaInicio,
-                    FechaFinal = tallerProgramacion.FechaFinal,
-                    NumeroParticipantes = tallerProgramacion.NumeroParticipantes,
-                    Publico = tallerProgramacion.publico.Descripcion,
-                    NumeroSesiones = tallerProgramacion.NumeroSesiones
-                };
-
+                    taller = new TallerProgramacionGetEstudianteDTO
+                    {
+                        Id = tallerProgramacion.Id,
+                        IdTaller = tallerProgramacion.IdTaller,
+                        NombreTaller = tallerProgramacion.taller.NombreTaller,
+                        IdUsuarioInstructor = tallerProgramacion.IdUsuarioInstructor,
+                        NombreUsuario = "Pending...",
+                        FechaInicio = tallerProgramacion.FechaInicio,
+                        FechaFinal = tallerProgramacion.FechaFinal,
+                        NumeroParticipantes = tallerProgramacion.NumeroParticipantes,
+                        Publico = tallerProgramacion.publico.Descripcion,
+                        NumeroSesiones = tallerProgramacion.NumeroSesiones
+                    };
+                }
             }
             catch (Exception)
             {
@@ -321,6 +319,7 @@ namespace Talleres.API.Repository
 
         public async Task<bool> PutTaller(TallerProgramacionPutDTO tallerUpdate)
         {
+            //TODO: ENviar Notificacion de actualizacion de taller
             //Pedir autorización en el frontend si la fecha de inicio que se pretende cambiar 
             //Es diferente
             bool flag = false;
@@ -352,6 +351,7 @@ namespace Talleres.API.Repository
                 flag = true;
 
                 //Enviar notificación de actualización de Taller
+
             }
             catch (Exception)
             {
@@ -400,6 +400,34 @@ namespace Talleres.API.Repository
             return flag;
         }
 
-        
+        public async Task<List<TallerProgramacionGetDTO>> GetTalleresByInstructor(int id)
+        {
+            IEnumerable<TallerProgramacion> tallerProgramacionList = await _db.TallerProgramaciones.Where(t => t.IdUsuarioInstructor == id)
+                                                                            .Include(t => t.taller).Include(t => t.publico)
+                                                                            .Include(t => t.patrocinador).ToListAsync();
+            List<TallerProgramacionGetDTO> lista = new List<TallerProgramacionGetDTO>();
+            TallerProgramacionGetDTO taller = null;
+
+            foreach (var item in tallerProgramacionList)
+            {
+                taller = new TallerProgramacionGetDTO
+                {
+                    Id = item.Id,
+                    IdTaller= item.IdTaller,
+                    NombreTaller = item.taller.NombreTaller,
+                    IdUsuarioInstructor = item.IdUsuarioInstructor,
+                    NombreUsuario = "Pending...",
+                    FechaInicio = item.FechaInicio.ToShortDateString(),
+                    FechaFinal = item.FechaFinal.ToShortDateString(),
+                    NumeroParticipantes = item.NumeroParticipantes,
+                    Publico = item.publico.Descripcion,
+                    Costo = item.Costo,
+                    NombrePatrocinador = item.patrocinador.NombrePatrocinador,
+                    NumeroSesiones = item.NumeroSesiones,
+                };
+                lista.Add(taller);
+            }
+            return lista;
+        }
     }
 }

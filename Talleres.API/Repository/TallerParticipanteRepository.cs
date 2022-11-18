@@ -26,7 +26,9 @@ namespace Talleres.API.Repository
             TallerProgramacion taller = await _db.TallerProgramaciones.Where(t=>t.Id==id).Include(t=>t.taller).FirstOrDefaultAsync();
             //Retornar lista de partipantes
             List<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes
-                                                                .Where(t => t.IdTallerProgramacion == id).Include(t => t.TallerProgramacion).ToListAsync();
+                                                                .Where(t => t.IdTallerProgramacion == id).Include(t => t.TallerProgramacion).
+                                                                OrderBy(t => t.IdUsuario)
+                                                                .ToListAsync();
 
             List<tallerParticipantesUsuariosDTO> usuarios = new List<tallerParticipantesUsuariosDTO>();
             tallerParticipantesUsuariosDTO user = null;
@@ -40,6 +42,7 @@ namespace Talleres.API.Repository
                 usuarios.Add(user);
             }
 
+            int restantes = taller.NumeroParticipantes-tallerParticipanteList.Count;
             //Creando respuesta
             tallerParticipantesUsuariosResponseDTO response = new tallerParticipantesUsuariosResponseDTO
             {
@@ -47,6 +50,7 @@ namespace Talleres.API.Repository
                 IdUsuarioInstructor = taller.IdUsuarioInstructor,
                 NombreTaller = taller.taller.NombreTaller,
                 NumeroParticipantes = taller.NumeroParticipantes,
+                Cupos = restantes,
                 Usuarios = usuarios
             };
 
@@ -56,7 +60,43 @@ namespace Talleres.API.Repository
         public async Task<List<tallerParticipantesUsuariosDTO>> GetTallerParticipantesNoIns(int id)
         {
             List<TallerParticipante> tallerParticipanteList = await _db.TallerParticipantes.Where(t => t.IdTallerProgramacion == id).ToListAsync();
-            return _mapper.Map<List<tallerParticipantesUsuariosDTO>>(tallerParticipanteList);
+
+            List<tallerParticipantesUsuariosDTO> usuarios = new List<tallerParticipantesUsuariosDTO>();
+            tallerParticipantesUsuariosDTO usuario = null;
+            foreach (var item in tallerParticipanteList)
+            {
+                usuario = new tallerParticipantesUsuariosDTO
+                {
+                    IdUsuario = item.IdUsuario
+                };
+                usuarios.Add(usuario);
+            }
+            return usuarios;
+        }
+
+        public async Task<bool> PostParticipantes(TallerParticipantePostDTO tallerParticipantePost)
+        {   //TODO: agregar transactions
+            bool flag = false;
+            try
+            {
+                //recorremos la respuesta y guardamos los usuarios
+                foreach (var item in tallerParticipantePost.usuarios)
+                {
+                    TallerParticipante participante = new TallerParticipante
+                    {
+                        IdTallerProgramacion = tallerParticipantePost.IdTallerProgramacion,
+                        IdUsuario = item.IdUsuario
+                    };
+                    _db.TallerParticipantes.Add(participante);
+                    await _db.SaveChangesAsync();
+                }
+                flag = true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return flag;
         }
     }
 }
