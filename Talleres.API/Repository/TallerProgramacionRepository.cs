@@ -41,6 +41,7 @@ namespace Talleres.API.Repository
         public async Task<IEnumerable<TallerProgramacionGetDTO>> GetActiveTalleres()
         {
             List<TallerProgramacionGetDTO> talleres = new List<TallerProgramacionGetDTO>();
+            //revisar talleres actvos
             try
             {
                 //Revisar Order By en respuesta con PostMan

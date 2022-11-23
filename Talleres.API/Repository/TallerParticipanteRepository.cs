@@ -98,5 +98,29 @@ namespace Talleres.API.Repository
             }
             return flag;
         }
+
+        public async Task<bool> PostParticipantesAceptaSolicitud(int id)
+        {
+            bool flag = false;
+            Solicitud sol = null;
+            try
+            {
+                sol = await _db.Solicitudes.Where(s => s.Id == id).FirstOrDefaultAsync();
+                TallerParticipante participante = new TallerParticipante
+                {
+                    IdUsuario = sol.IdUsuario,
+                    IdTallerProgramacion = sol.IdTallerProgramacion
+                };
+                _db.TallerParticipantes.Add(participante);
+                _db.Solicitudes.Remove(sol);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return flag;
+        }
     }
 }

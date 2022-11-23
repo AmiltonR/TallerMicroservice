@@ -20,6 +20,7 @@ namespace Talleres.Domain.Models.DTOs
         public double Costo { get; set; }
         public string NombrePatrocinador { get; set; }
         public int NumeroSesiones { get; set; }
-        
+        public int Solicitado { get; set; } = 0;
+
     }
 }

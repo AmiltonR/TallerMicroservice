@@ -69,5 +69,30 @@ namespace Talleres.API.Controllers
             }
             return Ok(_response);
         }
+
+        [HttpPost]
+        [Route("inscripcion/{id}")]
+        public async Task<object> PostInscripcionByBibliotecaria(int id)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _tallerParticipanteRepository.PostParticipantesAceptaSolicitud(id);
+                if (flag)
+                {
+                    _response.Success = true;
+                    _response.Message = "Participante Inscrito";
+                }
+                else
+                {
+                    _response.Message = "Ocurrió un error al incribir al estudiante. Estudiante no inscrito!";
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.Message = "Hubo un error";
+            }
+            return Ok(_response);
+        }
     }
 }

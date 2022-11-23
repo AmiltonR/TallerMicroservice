@@ -67,6 +67,14 @@ namespace Talleres.API
                 //PUT
                 config.CreateMap<Patrocinador, PatrocinadorGetPutDTO>();
                 config.CreateMap<PatrocinadorGetPutDTO, Patrocinador>();
+
+                //SOLICITUD
+                //POST
+                config.CreateMap<Solicitud, SolicitudPostDTO>();
+                config.CreateMap<SolicitudPostDTO, Solicitud>();
+                //GET
+                config.CreateMap<Solicitud, SolicitudGetDTO>();
+                config.CreateMap<SolicitudGetDTO, Solicitud>();
             });
             return mappingConfig;
         }
