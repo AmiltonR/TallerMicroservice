@@ -22,8 +22,12 @@ namespace Talleres.API.Repository
             bool flag = false;
             try
             {
-                Notificacion notificacion = await _db.Notificaciones.Where(n => n.IdUsuario == id).FirstOrDefaultAsync();
-                _db.Notificaciones.Remove(notificacion);
+                List<Notificacion> notificacion = await _db.Notificaciones.Where(n => n.IdUsuario == id).ToListAsync();
+
+                foreach (var item in notificacion)
+                {
+                    _db.Notificaciones.Remove(item);
+                }
                 await _db.SaveChangesAsync();
                 flag = true;
             }

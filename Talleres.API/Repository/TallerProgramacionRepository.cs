@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Talleres.API.Utilities;
 using Talleres.Domain.Entities;
 using Talleres.Domain.Models.DTOs;
@@ -20,13 +21,14 @@ namespace Talleres.API.Repository
             _mapper = mapper;
             _calcularFechaFinal = calcularFechaFinal;
         }
+        //Eliminar Taller
         public async Task<bool> DeleteTaller(int id)
         {
             using var transaction = _db.Database.BeginTransaction();
             bool flag = true;
             try
             {
-                TallerProgramacion taller = await _db.TallerProgramaciones.FirstOrDefaultAsync(t => t.Id == id);
+                TallerProgramacion taller = await _db.TallerProgramaciones.Include(t => t.taller).FirstOrDefaultAsync(t => t.Id == id);
                 List<TallerParticipante> participantes = await _db.TallerParticipantes.Where(t => t.Id == id).ToListAsync();
 
                 //Eliminando participantes
@@ -34,6 +36,13 @@ namespace Talleres.API.Repository
                 {
                     _db.TallerParticipantes.Remove(item);
                 }
+
+                //Enviando notificación de eliminación al instructor
+                Notificacion notificacion = new Notificacion();
+                notificacion.IdUsuario = taller.IdUsuarioInstructor;
+                notificacion.Notification = "Se ha eliminado el taller " + taller.taller.NombreTaller + ". Comuníquese con el Bibliotecario!";
+                
+                _db.Notificaciones.Add(notificacion);
 
                 //Eliminando el taller programado
                 _db.TallerProgramaciones.Remove(taller);
@@ -307,19 +316,25 @@ namespace Talleres.API.Repository
                         IdTallerProgramacion = idTallerProgramacion
                     };
                     _db.TallerHorarios.Add(horarioTaller);
-                    await _db.SaveChangesAsync();
                 }
 
-                //Pasos siguientes:
-                //  1. Agregar participantes (Mientras no se logre el numero de participantes límite) --DONE
-                //  2. Enviar notificación de asignación de taller. Enviar nombre Taller y Horarios
+                //recuperando el nombre del taller
+                Taller nombreTaller = await _db.Talleres.Where(t => t.Id == taller.IdTaller).FirstOrDefaultAsync();
 
+                //Enviando Notificacion
+                Notificacion notificacion = new Notificacion
+                {
+                    IdUsuario = taller.IdUsuarioInstructor,
+                    Notification = "Se le ha asignado al taller " + nombreTaller.NombreTaller +
+                                    " el cual dará inicio el " + taller.FechaInicio + ". Para más información revise la sección de 'Mis Talleres'" 
+                };
+                _db.Notificaciones.Add(notificacion);
 
-
-                    //Recuperar el usuario?
+                //Recuperar el usuario?
                 //EmailSender.Principal("¡Se le ha asignado a un Taller! Ingrese a la app para más detalles");
-                //  3. Crear DTOs Notificaciones?
 
+                //Guardando cambios en base de datos
+                await _db.SaveChangesAsync();
 
                 transaction.Commit();
                 flag = 1;
@@ -334,9 +349,7 @@ namespace Talleres.API.Repository
 
         public async Task<bool> PutTaller(TallerProgramacionPutDTO tallerUpdate)
         {
-            //TODO: ENviar Notificacion de actualizacion de taller
-            //Pedir autorización en el frontend si la fecha de inicio que se pretende cambiar 
-            //Es diferente
+            using var transaction = _db.Database.BeginTransaction();
             bool flag = false;
             try
             {
@@ -362,11 +375,22 @@ namespace Talleres.API.Repository
                 tallerPut.FechaFinal = _calcularFechaFinal.Calcular(diasTaller, tallerPut.NumeroSesiones, tallerPut.FechaInicio);
 
                 _db.TallerProgramaciones.Update(tallerPut);
-                await _db.SaveChangesAsync();
+                
                 flag = true;
 
-                //Enviar notificación de actualización de Taller
+                //recuperar el nombre del taller
+                Taller nombreTaller = await _db.Talleres.Where(t => t.Id == tallerUpdate.IdTaller).FirstOrDefaultAsync();
 
+
+                //Enviando notificaion de actualización de taller
+                Notificacion notificacion = new Notificacion
+                {
+                    IdUsuario = tallerUpdate.IdUsuarioInstructor,
+                    Notification = "Se ha Actualizado el taller " + nombreTaller.NombreTaller + ". Para más detalles consulte la sección de 'Mis Talleres'" 
+                };
+                _db.Notificaciones.Add(notificacion);
+                await _db.SaveChangesAsync();
+                transaction.Commit();
             }
             catch (Exception)
             {
