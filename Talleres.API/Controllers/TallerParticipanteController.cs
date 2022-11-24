@@ -94,5 +94,29 @@ namespace Talleres.API.Controllers
             }
             return Ok(_response);
         }
+        //Delete participante
+        [HttpDelete]
+        public async Task<object> DeleteParticipante(DeleteParticipanteDTO participante)
+        {
+            bool flag = false;
+            try
+            {
+                flag = await _tallerParticipanteRepository.DeleteParticipante(participante);
+                if (flag)
+                {
+                    _response.Success = true;
+                    _response.Message = "El participante ya no está inscrito";
+                }
+                else
+                {
+                    _response.Message = "Ocurrió un error!";
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.Message = "Hubo un error";
+            }
+            return Ok(_response);
+        }
     }
 }

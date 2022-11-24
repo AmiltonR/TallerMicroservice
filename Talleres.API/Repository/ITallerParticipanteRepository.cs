@@ -9,5 +9,6 @@ namespace Talleres.API.Repository
         Task<List<tallerParticipantesUsuariosDTO>> GetTallerParticipantesNoIns(int id);
         Task<bool> PostParticipantes(TallerParticipantePostDTO tallerParticipantePost);
         Task<bool> PostParticipantesAceptaSolicitud(int id);
+        Task<bool> DeleteParticipante(DeleteParticipanteDTO participante);
     }
 }

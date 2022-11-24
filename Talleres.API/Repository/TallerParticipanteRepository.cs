@@ -41,7 +41,7 @@ namespace Talleres.API.Repository
                 };
                 usuarios.Add(user);
             }
-
+            //Cupos disponibles
             int restantes = taller.NumeroParticipantes-tallerParticipanteList.Count;
             //Creando respuesta
             tallerParticipantesUsuariosResponseDTO response = new tallerParticipantesUsuariosResponseDTO
@@ -118,6 +118,25 @@ namespace Talleres.API.Repository
             }
             catch (Exception)
             {
+                throw;
+            }
+            return flag;
+        }
+
+        public async Task<bool> DeleteParticipante(DeleteParticipanteDTO participante)
+        {
+            bool flag = false;  
+            try
+            {
+                TallerParticipante part = await _db.TallerParticipantes.Where(s => s.IdUsuario == participante.IdUsuario && s.IdTallerProgramacion == participante.IdTallerProgramacion)
+                                                .FirstOrDefaultAsync();
+                _db.TallerParticipantes.Remove(part);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
             return flag;
