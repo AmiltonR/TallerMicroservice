@@ -298,8 +298,9 @@ namespace Talleres.API.Repository
                 }
 
                 //Pasos siguientes:
-                //  1. Agregar participantes (Mientras no se logre el numero de participantes límite)
+                //  1. Agregar participantes (Mientras no se logre el numero de participantes límite) --DONE
                 //  2. Enviar notificación de asignación de taller. Enviar nombre Taller y Horarios
+
 
 
                     //Recuperar el usuario?
