@@ -1,17 +1,54 @@
-﻿using Talleres.Domain.Models.DTOs;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Talleres.Domain.Entities;
+using Talleres.Domain.Models.DTOs;
+using Talleres.Infrastructure;
 
 namespace Talleres.API.Repository
 {
     public class NotificacionesRepository : INotificacionRepository
     {
-        public Task<bool> DeleteNotificacionesByUsuario(int id)
+        private IMapper _mapper;
+        private readonly TallerContext _db;
+
+        public NotificacionesRepository(IMapper mapper, TallerContext db)
         {
-            throw new NotImplementedException();
+            _mapper = mapper;
+            _db = db;
         }
 
-        public Task<List<NotificacionGetDTO>> GetNotificacionesByUsuario(int id)
+        public async Task<bool> DeleteNotificacionesByUsuario(int id)
         {
-            throw new NotImplementedException();
+            bool flag = false;
+            try
+            {
+                Notificacion notificacion = await _db.Notificaciones.Where(n => n.IdUsuario == id).FirstOrDefaultAsync();
+                _db.Notificaciones.Remove(notificacion);
+                await _db.SaveChangesAsync();
+                flag = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return flag;
+        }
+
+        public async Task<List<NotificacionGetDTO>> GetNotificacionesByUsuario(int id)
+        {
+            List<Notificacion> notif = null;
+            try
+            {
+                notif = await _db.Notificaciones.Where(n => n.IdUsuario == id).ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return _mapper.Map<List<NotificacionGetDTO>>(notif);
+            
         }
     }
 }

@@ -75,6 +75,10 @@ namespace Talleres.API
                 //GET
                 config.CreateMap<Solicitud, SolicitudGetDTO>();
                 config.CreateMap<SolicitudGetDTO, Solicitud>();
+
+                //NOTIFICACIONES
+                config.CreateMap<Notificacion, NotificacionGetDTO>();
+                config.CreateMap<NotificacionGetDTO, Notificacion>();
             });
             return mappingConfig;
         }

@@ -23,6 +23,7 @@ builder.Services.AddScoped<ITallerProgramacionRepository, TallerProgramacionRepo
 builder.Services.AddScoped<IPublicoRepository, PublicoRepository>();
 builder.Services.AddScoped<IPatrocinadorRepository, PatrocinadorRepository>();
 builder.Services.AddScoped<ISolicitudRepository, SolicitudRepositoy>();
+builder.Services.AddScoped<INotificacionRepository, NotificacionesRepository>();
 builder.Services.AddSingleton<CalcularFechaFinal>();
 
 builder.Services.AddDbContext<TallerContext>(options =>
