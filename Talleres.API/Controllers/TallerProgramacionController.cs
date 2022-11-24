@@ -172,7 +172,7 @@ namespace Talleres.API.Controllers
             return Ok(_responseVoidDTO);
         }
 
-        [HttpDelete]
+        [HttpDelete("id")]
         [Route("{id}")]
         public async Task<Object> Delete(int id)
         {
@@ -186,8 +186,7 @@ namespace Talleres.API.Controllers
                 }
                 else
                 {
-                    _responseVoidDTO.Success = false;
-                    _responseVoidDTO.Message = "No puede Eliminar el taller porque está activo";
+                    _responseVoidDTO.Message = "No se ha podido eliminar el taller";
                 }
             }
             catch (Exception ex)

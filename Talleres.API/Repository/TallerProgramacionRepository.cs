@@ -22,13 +22,26 @@ namespace Talleres.API.Repository
         }
         public async Task<bool> DeleteTaller(int id)
         {
-            //Comprobar que no tenga participantes
+            using var transaction = _db.Database.BeginTransaction();
             bool flag = true;
             try
             {
                 TallerProgramacion taller = await _db.TallerProgramaciones.FirstOrDefaultAsync(t => t.Id == id);
-                bool hasParticipantes = _db.TallerParticipantes.Any(p => p.IdTallerProgramacion == id);
-               //pending
+                List<TallerParticipante> participantes = await _db.TallerParticipantes.Where(t => t.Id == id).ToListAsync();
+
+                //Eliminando participantes
+                foreach (var item in participantes)
+                {
+                    _db.TallerParticipantes.Remove(item);
+                }
+
+                //Eliminando el taller programado
+                _db.TallerProgramaciones.Remove(taller);
+
+                //Guardando cambios
+                await _db.SaveChangesAsync();
+                transaction.Commit();
+                flag = true;
             }
             catch (Exception)
             {
